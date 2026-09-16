@@ -1,8 +1,65 @@
 #+title: Emacs to Lem Migration
 
-This repository owns the evidence-driven migration of the user's active GNU
-Emacs/Doom environment to Lem.  It starts from the exact source baselines
-recorded in =.prolog/kb/= and does not claim parity until executable probes pass.
+* Purpose
 
-The repository is being bootstrapped with a declarative Nix/Home Manager Lem
-installation, RAGE issues, and a Git-tracked Prolog knowledge base.
+This repository owns the evidence-driven migration of the active Doom/GNU
+Emacs environment to Lem.  It tracks explicit packages, implicit Doom modules,
+custom code, snippets, external tools, and user-visible workflows.  Package
+list equality is not treated as feature parity.
+
+* Pinned evidence
+
+- Source environment :: =lost-rob0t/dotfiles@6adff8f295201bec7c45b655123615c56a20d3fb=
+- Lem upstream :: =lem-project/lem@75b48185d5e90283d6ab50cccff15322b6fb8987=
+- Migration epic :: [[https://github.com/lost-rob0t/emacs--lem-/issues/1][#1]]
+- Control-plane decision :: [[https://github.com/lost-rob0t/emacs--lem-/issues/2][#2]]
+- Install/activation slice :: [[https://github.com/lost-rob0t/emacs--lem-/issues/3][#3]]
+- Inventory/parity probes :: [[https://github.com/lost-rob0t/emacs--lem-/issues/4][#4]]
+
+* Lem installation scaffold
+
+The flake pins upstream Lem and exposes its ncurses package/app plus a Home
+Manager module.  A consuming Home Manager configuration can import it and set:
+
+#+begin_src nix
+{
+  inputs.star-lem.url = "github:lost-rob0t/emacs--lem-";
+
+  # In the Home Manager module list:
+  imports = [ inputs.star-lem.homeModules.default ];
+
+  programs.star-lem.enable = true;
+}
+#+end_src
+
+This installs the pinned =lem-ncurses= package and deploys this repository's
+=lem/= tree to =~/.config/lem/=.  The real =flake.lock=, host activation, build
+evidence, and launch evidence belong to issue #3 and must be produced on a Nix
+host.  This bootstrap does not replace Doom, change =$EDITOR=, or claim parity.
+
+For an upstream-only smoke install at the exact pinned revision:
+
+#+begin_src sh
+nix profile add github:lem-project/lem/75b48185d5e90283d6ab50cccff15322b6fb8987#lem-ncurses
+#+end_src
+
+* Knowledge base
+
+The Git-tracked Prolog KB lives in =.prolog/kb/=.  It records the source and
+target SHAs, current control mode, package/module/custom-component inventory,
+domain ownership, issue numbers, and queue order.
+
+#+begin_src sh
+bash tests/verify-kb.sh
+bash tests/verify-kb.sh --implementation
+#+end_src
+
+The normal check validates the bootstrap KB.  The implementation gate fails
+while the control mode is =unselected=, as required by RAGE issue #2.
+
+* Current state
+
+- Lem packaging/config scaffold: present, not host-verified.
+- RAGE queue: issues #1 through #16.
+- Control mode: unselected; port implementation is blocked on issue #2.
+- Feature parity: not claimed.
