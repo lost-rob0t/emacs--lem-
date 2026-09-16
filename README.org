@@ -1,0 +1,8 @@
+#+title: Emacs to Lem Migration
+
+This repository owns the evidence-driven migration of the user's active GNU
+Emacs/Doom environment to Lem.  It starts from the exact source baselines
+recorded in =.prolog/kb/= and does not claim parity until executable probes pass.
+
+The repository is being bootstrapped with a declarative Nix/Home Manager Lem
+installation, RAGE issues, and a Git-tracked Prolog knowledge base.
